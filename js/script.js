@@ -28,8 +28,6 @@ const optArticleSelector = '.post',
 
 function generateTitleLinks(){
 
-	console.log('Działam!');
-
 	const titleList = document.querySelector(optTitleListSelector);
 	titleList.innerHTML = '';
 
@@ -42,7 +40,6 @@ function generateTitleLinks(){
 	  			articleTitle = article.querySelector(optTitleSelector).innerHTML,
 	  			linkHTML = '<li><a href="#' + articleId + '"><span>' + articleTitle + '</span></a></li>';
 	  html = html + linkHTML;
-	  console.log(html)
 	}
 
 	titleList.innerHTML = html;
