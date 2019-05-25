@@ -1,16 +1,14 @@
 'use strict';
 
 function titleClickHandler(event){
-  console.log('Link was clicked!');
-  console.log(event);
 
-  const activeLinks = document.querySelectorAll('.titles a.active');
+  const activeLinks = document.querySelectorAll('.titles a.active'),
+  		clickedElement = this;
 
   for(let activeLink of activeLinks){
     activeLink.classList.remove('active');
   }
-
-  /* add class 'active' to the clicked link */
+  clickedElement.classList.add('active');
 
   const activeArticles = document.querySelectorAll('.posts .post');
 
