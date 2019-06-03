@@ -24,14 +24,15 @@ function titleClickHandler(event){
 
 const optArticleSelector = '.post',
   optTitleSelector = '.post-title',
-  optTitleListSelector = '.titles';
+  optTitleListSelector = '.titles',
+  optArticleTagsSelector ='.post-tags .list';
 
-function generateTitleLinks(){
+function generateTitleLinks(customSelector = ''){
 
   const titleList = document.querySelector(optTitleListSelector);
   titleList.innerHTML = '';
 
-  const articles = document.querySelectorAll(optArticleSelector);
+  const articles = document.querySelectorAll(optArticleSelector + customSelector);
 
   let html = '';
 
@@ -51,3 +52,51 @@ function generateTitleLinks(){
   }
 }
 generateTitleLinks();
+
+function generateTags(){
+  const articles = document.querySelectorAll(optArticleSelector); // tu się zastanawiałem po co mam drugi raz deklarować stałą i chciałem ją zmienić na globalna, ale przypomniało mi się, że przynajmniej w jquery jesli zmienną jest funkcja to wykonuje się ona w miejscu deklaracji, więc pewnie dlatego ją deklarują drugi raz i postanowiłem to zostawić, aby nie obciążało strony
+
+  for(let article of articles){
+    const tagWrapper = article.querySelector(optArticleTagsSelector);
+    let html = '',
+      articleTags = article.getAttribute('data-tags');
+    const articleTagsArray = articleTags.split(' '); // w takich właśnie miejscach jak ta i 3 linie wyżej zastanawiam się czy używać się powinno let czy const, bo często podają const, ale będzie on zawierał zawsze inną wartość (w tym przypadku tagi się zmieniają), ale może po prostu za bardzo szukam dziury w całym
+    for(let tag of articleTagsArray){
+      html = html + '<li><a href="#tag-'+tag+'">'+tag+'</a></li>';
+    }
+    tagWrapper.innerHTML = html;
+  }
+}
+generateTags();
+
+function tagClickHandler(event){
+  event.preventDefault();
+
+  const clickedElement = this,
+    href = clickedElement.getAttribute('href'),
+    tag = href.replace('#tag-', ''),
+    activeLinkSelector = 'a.active[href^="#tag-"]',
+    activeLinks = document.querySelectorAll(activeLinkSelector);
+  for(let activeLink of activeLinks){
+    activeLink.classList.remove('active');
+  }
+  const linkSameHrefSelector = 'a[href="'+href+'"]',
+    linkSameHrefs = document.querySelectorAll(linkSameHrefSelector);
+
+  for(let linkSameHref of linkSameHrefs){
+    clickedElement.classList.add('active');
+  }
+  generateTitleLinks('[data-tags~="' + tag + '"]');
+}
+
+function addClickListenersToTags(){
+  const activeLinkSelector = 'a[href^="#tag-"]',
+    activeLinks = document.querySelectorAll(activeLinkSelector);
+
+  for(let activeLink of activeLinks){
+    activeLink.addEventListener('click', tagClickHandler);
+  }
+}
+
+addClickListenersToTags();
+
