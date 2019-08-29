@@ -42,6 +42,7 @@ body {
 .sidebar {
   -ms-flex: 1 0 0px;
       flex: 1 0 0;
+  max-width: calc(100% / 3);
 }
 
 .posts {
@@ -106,5 +107,35 @@ body {
 
 .post-tags p {
   margin: 0 10px 0 0;
+}
+
+.list.tags {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+
+.list.tags li {
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  margin-right: 5px;
+  -ms-flex-item-align: baseline;
+      align-self: baseline;
+}
+
+.list.tags .tag-size-1 {
+  font-size: calc(8px + 1px * 4);
+  text-decoration: none;
+}
+
+.list.tags .tag-size-2 {
+  font-size: calc(8px + 2px * 4);
+  text-decoration: none;
+}
+
+.list.tags .tag-size-3 {
+  font-size: calc(8px + 3px * 4);
+  text-decoration: none;
 }
 /*# sourceMappingURL=style.css.map */

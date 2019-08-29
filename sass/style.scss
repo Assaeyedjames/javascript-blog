@@ -51,6 +51,7 @@ body {
 
 .sidebar {
   flex: 1 0 0;
+  max-width: calc(100% / 3);
 }
 
 .posts {
@@ -122,3 +123,24 @@ body {
     margin: 0 10px 0 0;
   }
 }
+
+.list {
+  &.tags {
+    display: flex;
+    flex-wrap: wrap;
+    li {
+      display: inline-flex;
+      margin-right: 5px;
+      align-self: baseline;
+    }
+    @for $i from 1 through 3 {
+      .tag-size {
+        &-#{$i} {
+          font-size: calc(8px + #{$i}px * 4);
+          text-decoration: none;
+        }
+      }
+    }
+  }
+}
+
