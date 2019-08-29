@@ -1,5 +1,13 @@
 'use strict';
 
+const templates = {
+  articleLink: Handlebars.compile(document.querySelector('#template-article-link').innerHTML),
+  articleTagsLink: Handlebars.compile(document.querySelector('#template-article-tags-link').innerHTML),
+  articleAuthorLink: Handlebars.compile(document.querySelector('#template-article-author-link').innerHTML),
+  tagCloudLink: Handlebars.compile(document.querySelector('#template-tag-cloud-link').innerHTML),
+  authorsListLink: Handlebars.compile(document.querySelector('#template-authors-list-link').innerHTML)
+}
+
 function titleClickHandler(event) {
   event.preventDefault();
 
@@ -43,7 +51,8 @@ function generateTitleLinks(customSelector = '') {
   for(let article of articles){
     const articleId = article.getAttribute('id'),
       articleTitle = article.querySelector(optTitleSelector).innerHTML,
-      linkHTML = '<li><a href="#' + articleId + '"><span>' + articleTitle + '</span></a></li>';
+      linkHTMLData = {id: articleId, title: articleTitle},
+      linkHTML = templates.articleLink(linkHTMLData);
     html = html + linkHTML;
   }
 
@@ -63,7 +72,6 @@ function calculateTagsParams(tags) {
     min: 999999
   };
   for(let tag in tags){
-    console.log(tag + ' is used ' + tags[tag] + ' times');
     params.max = Math.max(tags[tag], params.max);
     params.min = Math.min(tags[tag], params.min);
   }
@@ -88,7 +96,8 @@ function generateTags() {
       articleTags = article.getAttribute('data-tags');
     const articleTagsArray = articleTags.split(' '); // w takich właśnie miejscach jak ta i 3 linie wyżej zastanawiam się czy używać się powinno let czy const, bo często podają const, ale będzie on zawierał zawsze inną wartość (w tym przypadku tagi się zmieniają), ale może po prostu za bardzo szukam dziury w całym
     for(let tag of articleTagsArray){
-      html = html + '<li><a href="#tag-'+tag+'">'+tag+'</a></li>';
+      const tagsLinkHTMLData = {id: tag, tag: tag};
+      html = html + templates.articleTagsLink(tagsLinkHTMLData);
       if(!allTags.hasOwnProperty(tag)){
         allTags[tag] = 1;
       } else {
@@ -98,14 +107,17 @@ function generateTags() {
     tagWrapper.innerHTML = html;
   }
   const tagList = document.querySelector('.tags'),
-    tagsParams = calculateTagsParams(allTags);
-  let allTagsHTML = '';
+    tagsParams = calculateTagsParams(allTags),
+    allTagsData = {tags: []};
 
   for(let tag in allTags) {
-    const tagLinkHTML = '<li><a class="' + calculateTagClass(allTags[tag], tagsParams) + '" href="#tag-'+tag+'">' + tag + '</a></li>';
-    allTagsHTML += tagLinkHTML;
+    allTagsData.tags.push({
+      tag: tag,
+      count: allTags[tag],
+      className: calculateTagClass(allTags[tag], tagsParams)
+    });
   }
-  tagList.innerHTML = allTagsHTML;
+  tagList.innerHTML = templates.tagCloudLink(allTagsData);
 }
 generateTags();
 
@@ -117,7 +129,8 @@ function generateAuthors() {
     const authorWrapper = article.querySelector(optAuthorSelector);
     let html = '',
       articleAuthor = article.getAttribute('data-author');
-    html = html + '<a href="#author-'+articleAuthor.toLowerCase().replace(' ','-')+'">'+articleAuthor+'</a>';
+    const articleAuthorHTMLData = {id: articleAuthor.toLowerCase().replace(' ','-'), author: articleAuthor};
+    html = html + templates.articleAuthorLink(articleAuthorHTMLData);
     if(!allAuthors.hasOwnProperty(articleAuthor)){
       allAuthors[articleAuthor] = 1;
     } else {
@@ -125,14 +138,17 @@ function generateAuthors() {
     }
     authorWrapper.innerHTML = html;
   }
-  const authorsList = document.querySelector('.authors');
-  let allAuthorsHTML = '';
+  const authorsList = document.querySelector('.authors'),
+    allAuthorsData = {authors: []};
 
   for(let author in allAuthors) {
-    const authorLinkHTML = '<li><a href="#author-'+author.toLowerCase()+'">' + author + ' (' + allAuthors[author] + ') </a></li>';
-    allAuthorsHTML += authorLinkHTML;
+    allAuthorsData.authors.push({
+      author: author,
+      authorUrl: author.toLowerCase(),
+      count: allAuthors[author]
+    });
   }
-  authorsList.innerHTML = allAuthorsHTML;
+  authorsList.innerHTML = templates.authorsListLink(allAuthorsData);
 }
 generateAuthors();
 
